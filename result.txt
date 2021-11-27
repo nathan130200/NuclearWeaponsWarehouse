@@ -1,0 +1,56 @@
+settings
+{
+	main
+	{
+		Description: "Nuclear Weapons Warehouse - Reworked - Code: ATXAX | CHANGELOG: Dummy bots can play while an player don't stay in slot."
+		Mode Name: "+500%"
+	}
+
+	lobby
+	{
+		Allow Players Who Are In Queue: Yes
+		Data Center Preference: USA - Central
+		Map Rotation: After A Game
+		Match Voice Chat: Enabled
+		Max Spectators: 6
+		Return To Lobby: Never
+		Use Experimental Update If Available: Yes
+	}
+
+	modes
+	{
+		Skirmish
+		{
+			enabled maps
+			{
+				Watchpoint: Gibraltar
+			}
+		}
+
+		General
+		{
+			Game Mode Start: Immediately
+			Hero Limit: Off
+			Respawn As Random Hero: On
+			Respawn Time Scalar: 0%
+		}
+	}
+
+	heroes
+	{
+		General
+		{
+			Ability Cooldown Time: 0%
+			Health: 200%
+			Infinite Ultimate Duration: On
+			Movement Speed: 125%
+			No Ammunition Requirement: On
+			Projectile Speed: 250%
+			Spawn With Ultimate Ready: On
+			Ultimate Generation: 250%
+			Ultimate Generation - Combat: 250%
+			Ultimate Generation - Passive: 500%
+		}
+	}
+}
+ 
