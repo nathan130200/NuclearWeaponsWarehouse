@@ -8,6 +8,7 @@ globalvar spawn
 #!define getTeamScore(team) scores[0 if team == Team.1 else 1]
 #!define getTeamHighScore(team) scores[2 if team == Team.1 else 3]
 #!define createHud(players, text, slot, pos, col, spec) hudSubtext(players, text, pos, slot, col, HudReeval.VISIBILITY_STRING_AND_COLOR, spec)
+#!define clientOnly() [x for x in [localPlayer] if x.hasSpawned()]
 
 rule "Initialize Global":
     @Event global
@@ -24,9 +25,9 @@ rule "Initialize Global":
         getConfig(CONFIG_SWITCH_TIMER_VALUE)
     ]
 
-    createHud(clientOnly(), "\u200b\n\n\n\nNUCLEAR", 5, DEFAULT_HUD_POS, Color.TURQUOISE, SpecVisibility.ALWAYS)
+    createHud(clientOnly(), "\u200b\n\n\n\nNUCLEAR", 5, DEFAULT_HUD_POS, Color.BLUE, SpecVisibility.ALWAYS)
     createHud(clientOnly(), "WEAPONS", 6, DEFAULT_HUD_POS, Color.SKY_BLUE, SpecVisibility.ALWAYS)
-    createHud(clientOnly(), "WAREHOUSE\n\n", 7, DEFAULT_HUD_POS, Color.TURQUOISE, SpecVisibility.ALWAYS)
+    createHud(clientOnly(), "WAREHOUSE\n\n", 7, DEFAULT_HUD_POS, Color.AQUA, SpecVisibility.ALWAYS)
 
     createHud(clientOnly(), "{} OUR SCORE: {}".format(
         iconString(Icon.HEART), getTeamScore(localPlayer.getTeam())
