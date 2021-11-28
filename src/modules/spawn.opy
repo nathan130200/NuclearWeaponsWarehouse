@@ -11,10 +11,14 @@ rule "[TEAM1] Respawn":
     @Condition eventPlayer.isAlive()
     @Condition eventPlayer.isInSpawnRoom()
 
-    if not isSpawnSwitched():
-        eventPlayer.teleport(spawn[2])
-    else:
-        eventPlayer.teleport(spawn[1])
+    do:
+        if not isSpawnSwitched():
+            eventPlayer.teleport(spawn[2])
+        else:
+            eventPlayer.teleport(spawn[1])
+
+        wait(0.25)
+    while RULE_CONDITION
 
 rule "[TEAM2] Respawn":
     @Event eachPlayer
@@ -22,16 +26,21 @@ rule "[TEAM2] Respawn":
     @Condition eventPlayer.isAlive()
     @Condition eventPlayer.isInSpawnRoom()
 
-    if not isSpawnSwitched():
-        eventPlayer.teleport(spawn[1])
-    else:
-        eventPlayer.teleport(spawn[2])
+    do:
+        if not isSpawnSwitched():
+            eventPlayer.teleport(spawn[1])
+        else:
+            eventPlayer.teleport(spawn[2])
+    
+        wait(0.25)
+    while RULE_CONDITION
 
-rule "[TEAMS] Tick switch teams timer":
+rule "[SPAWN] Tick switch teams timer":
     @Event global
     @Condition getConfig(CONFIG_SWITCH_TIMER_ENABLED)
     do:
         if switchTeamsTimer <= 0:
+            bigMessage(getAllPlayers(), "Teams spawn points switched")
             switchTeamsTimer = getConfig(CONFIG_SWITCH_TIMER_VALUE)
             switchSpawns()
     
@@ -39,24 +48,15 @@ rule "[TEAMS] Tick switch teams timer":
         wait(1)
     while RULE_CONDITION
 
-rule "[TEAMS] Tick switch teams timer hud":
-    @Event global
-    @Condition getConfig(CONFIG_SWITCH_TIMER_ENABLED)
-    
-    do:
-        if ceil(switchTeamsTimer / 60) >= 1.0:
-            switchTeamsTimeTemp = round(switchTeamsTimer / 60)
-        else:
-            switchTeamsTimeTemp = "0"
+rule "[SPAWN] Spawn protection":
+    @Event eachPlayer
+    @Condition eventPlayer.isInSpawnRoom()
+    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
+    eventPlayer.setInvisibility(Invis.ALL)
+    wait(2)
+    waitUntil(eventPlayer.isMoving(), 9999)
+    eventPlayer.clearStatusEffect(Status.PHASED_OUT)
+    eventPlayer.setInvisibility(Invis.NONE)
 
-        switchTeamsTimeTemp = "{}:".format(switchTeamsTimeTemp)
-
-        if round(switchTeamsTimer % 60) <= 9:
-            switchTeamsTimeTemp = "{}0{}".format(switchTeamsTimeTemp, switchTeamsTimer % 60)
-        else:
-            switchTeamsTimeTemp = "{}{}".format(switchTeamsTimeTemp, switchTeamsTimer % 60)
-
-        switchTeamsTimeStr = switchTeamsTimeTemp
-
-        wait(getConfig(CONFIG_SWITCH_TIMER_INTERVAL))
-    while RULE_CONDITION
+    # Just funny moments
+    eventPlayer.communicate(Comms.VOICE_LINE_UP)
