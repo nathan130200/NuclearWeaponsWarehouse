@@ -39,5 +39,5 @@ root + `
 rule "[SHARED STATS] Update display task.":
     @Event global
 ${subroutines.map(x => `\t${x.name}()`).join('\n')}
-    wait(getConfig(CONFIG_UPDATE_SHARED_STATS_INTERVAL))
+    wait(getConfig(opt_UpdateServerStatsInterval))
     goto RULE_START`;

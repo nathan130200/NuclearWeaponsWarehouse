@@ -1,48 +1,54 @@
-#!define isSpawnSwitched() spawn[0]
-#!define switchSpawns() spawn[0] = not spawn[0]
-#!define getTeamSpawn(team) spawn[1] if team == Team.1 else spawn[2]
-#!define switchTeamsTimer spawn[3]
-#!define switchTeamsTimeStr spawn[4]
-#!define switchTeamsTimeTemp spawn[5]
+#!define isTeamsSwitched() spawn[0]
+#!define switchTeams() spawn[0] = not spawn[0]
+#!define POS1 spawn[1]
+#!define POS2 spawn[2]
 
-rule "[TEAM1] Respawn":
+#!define getSpawnPoint(team) \
+    (getBaseSpawn(getOppositeTeam(team))) if isTeamsSwitched() else getBaseSpawn(team)
+
+#!define getBaseSpawn(team) POS1 if team == Team.1 else POS2
+
+rule "[SPAWN POINT] Team 1":
     @Event eachPlayer
     @Team 1
     @Condition eventPlayer.isAlive()
     @Condition eventPlayer.isInSpawnRoom()
-
     do:
-        if not isSpawnSwitched():
-            eventPlayer.teleport(spawn[2])
+        if isTeamsSwitched():
+            eventPlayer.teleport(POS2)
         else:
-            eventPlayer.teleport(spawn[1])
+            eventPlayer.teleport(POS1)
 
-        wait(0.25)
+
+        wait(0.5)
     while RULE_CONDITION
 
-rule "[TEAM2] Respawn":
+rule "[SPAWN POINT] Team 2":
     @Event eachPlayer
     @Team 2
     @Condition eventPlayer.isAlive()
     @Condition eventPlayer.isInSpawnRoom()
-
     do:
-        if not isSpawnSwitched():
-            eventPlayer.teleport(spawn[1])
+        if isTeamsSwitched():
+            eventPlayer.teleport(POS1)
         else:
-            eventPlayer.teleport(spawn[2])
-    
-        wait(0.25)
+            eventPlayer.teleport(POS2)
+
+
+        wait(0.5)
     while RULE_CONDITION
+
+#!define switchTeamsTimer spawn[3]
+#!define switchTeamsTimeStr spawn[4]
+#!define switchTeamsTimeTemp spawn[5]
 
 rule "[SPAWN] Tick switch teams timer":
     @Event global
-    @Condition getConfig(CONFIG_SWITCH_TIMER_ENABLED)
+    @Condition getConfig(opt_SwitchTeams_Enabled)
     do:
         if switchTeamsTimer <= 0:
-            bigMessage(getAllPlayers(), "Teams spawn points switched")
-            switchTeamsTimer = getConfig(CONFIG_SWITCH_TIMER_VALUE)
-            switchSpawns()
+            switchTeams()
+            switchTeamsTimer = getConfig(opt_SwitchTeams_Time)
     
         switchTeamsTimer = switchTeamsTimer - 1
         wait(1)
@@ -51,12 +57,20 @@ rule "[SPAWN] Tick switch teams timer":
 rule "[SPAWN] Spawn protection":
     @Event eachPlayer
     @Condition eventPlayer.isInSpawnRoom()
-    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
     eventPlayer.setInvisibility(Invis.ALL)
-    wait(2)
+    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
+    wait(1)
     waitUntil(eventPlayer.isMoving(), 9999)
-    eventPlayer.clearStatusEffect(Status.PHASED_OUT)
     eventPlayer.setInvisibility(Invis.NONE)
+    eventPlayer.clearStatusEffect(Status.PHASED_OUT)
 
-    # Just funny moments
-    eventPlayer.communicate(Comms.VOICE_LINE_UP)
+    eventPlayer.tempVarVoiceLine = random.randint(0, 4)
+
+    if eventPlayer.tempVarVoiceLine == 0:
+        eventPlayer.communicate(Comms.VOICE_LINE_UP)
+    elif eventPlayer.tempVarVoiceLine == 1:
+        eventPlayer.communicate(Comms.VOICE_LINE_RIGHT)
+    elif eventPlayer.tempVarVoiceLine == 2:
+        eventPlayer.communicate(Comms.VOICE_LINE_LEFT)
+    elif eventPlayer.tempVarVoiceLine == 3:
+        eventPlayer.communicate(Comms.VOICE_LINE_DOWN)

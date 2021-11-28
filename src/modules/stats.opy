@@ -11,7 +11,7 @@
 
 rule "Initialize server stats.":
     @Event global
-    @Condition getConfig(CONFIG_ENABLE_SERVER_STATS)
+    @Condition getConfig(opt_EnableServerStats)
 
     serverStatHud("\u200b\n{} SERVER LOAD".format(iconString(Icon.BOLT)), 0, 31)
     serverStatHud("{} SERVER LOAD PEAK".format(iconString(Icon.STOP)), 1, 32)
@@ -27,12 +27,13 @@ rule "[SHARED STATS] Process 'DAMAGE' stat":
     @Event playerTookDamage
     @Condition entityExists(attacker)
     @Condition attacker != victim
-    @Condition eventDamage >= 0.1
+    @Condition eventDamage >= 0
     stats[STAT_DAMAGE] += eventDamage
 
 rule "[SHARED STATS] Process 'HEAL' stat":
     @Event playerReceivedHealing
-    @Condition eventHealing >= 0.1
+    @Condition eventHealing >= 0
+    @Condition not eventPlayer.isInSpawnRoom()
     stats[STAT_HEAL] += eventHealing
 
 # Generate rules for valid stat types.

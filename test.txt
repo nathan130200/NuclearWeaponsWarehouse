@@ -1,0 +1,31 @@
+rule ("[AUTO BALANCE] Auto balanced based on players slots") {
+    event {
+        Ongoing - Global;
+    }
+    conditions {
+        Value In Array(Global.configs, 4) != False;
+        Value In Array(Global.configs, 5) != False;
+    }
+    actions {
+        If(Compare(Absolute Value(Subtract(Number Of Players(Team 1), Number Of Players(Team 2))), >, 1));
+            If(Compare(Number Of Players(Team 1), >, Number Of Players(Team 2)));
+                If(Compare(Number Of Players(Team 2), <, 6));
+                    Set Global Variable(autoBalanceTemp, Array(Random Value In Array(All Players(Team 1)), Team 2));
+                End;
+            Else If(Compare(Number Of Players(Team 2), >, Number Of Players(Team 1)));
+                If(Compare(Number Of Players(Team 2), <, 6));
+                    Set Global Variable(autoBalanceTemp, Array(Random Value In Array(All Players(Team 2)), Team 1));
+                End;
+            End;
+        End;
+        If(And(Entity Exists(First Of(Global.autoBalanceTemp)), Compare(First Of(Global.autoBalanceTemp), !=, Null)));
+            Log To Inspector(Custom String("[AUTO BALANCE] Moved player '{0}'' to team '{1}'", First Of(Global.autoBalanceTemp), Value In Array(Global.autoBalanceTemp, 1), Null));
+            Move Player to Team(First Of(Global.autoBalanceTemp), Value In Array(Global.autoBalanceTemp, 1), -1);
+            Set Global Variable(autoBalanceTemp, Null);
+            Wait(1, Ignore Condition);
+        End;
+        Wait(1, Ignore Condition);
+        Loop If Condition Is True;
+    }
+}
+

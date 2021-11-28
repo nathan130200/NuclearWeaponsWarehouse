@@ -11,6 +11,8 @@
 # Team score function utilities
 #
 
+#!define getTeamSpawn(team) spawns
+
 #!define getTeamScore(team) scores[0 if team == Team.1 else 1]
 #!define getTeamHighScore(team) scores[2 if team == Team.1 else 3]
 #!define getTeamScoreByIndex(index) scores[index]

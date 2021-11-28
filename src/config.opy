@@ -3,8 +3,16 @@
 
 #!define getConfig(id) configs[id]
 
+# Switch teams settings
+#!define opt_SwitchTeams_Enabled 0
+#!define opt_SwitchTeams_Time 1
 
-#!define CONFIG_SWITCH_TIMER_ENABLED 0
-#!define CONFIG_SWITCH_TIMER_VALUE 1
-#!define CONFIG_ENABLE_SERVER_STATS 2
-#!define CONFIG_UPDATE_SHARED_STATS_INTERVAL 3
+# Advanced settings
+#!define opt_EnableServerStats 2
+#!define opt_UpdateServerStatsInterval 3
+
+# Team balance settings
+#!define opt_TeamBalance_Enabled 4
+#!define opt_TeamBalance_MovePlayers 5
+#!define opt_TeamBalance_SpawnBot 6
+#!define opt_TeamBalance_SpawnBotCount 7

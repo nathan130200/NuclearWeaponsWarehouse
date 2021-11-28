@@ -8,16 +8,20 @@ rule "Initialize Global":
     @Event global
     scores = [0,0,0,0]
 
-    registerConfig(bool, "Enabled", "Switch Spawns", CONFIG_SWITCH_TIMER_ENABLED, true, 0)
-    registerConfig(int[15:900], "Cooldown (in seconds)", "Switch Spawns", CONFIG_SWITCH_TIMER_VALUE, 60, 1)
-    registerConfig(bool, "Enable Server Stats Monitor", "Advanced", CONFIG_ENABLE_SERVER_STATS, false, 0)
-    registerConfig(float[1:10], "Update Shared Stats Interval", "Advanced", CONFIG_UPDATE_SHARED_STATS_INTERVAL, 2, 1)
+    registerConfig(bool, "Switch Teams Enabled", "Switch Teams", opt_SwitchTeams_Enabled, true, 0)
+    registerConfig(int[15:900], "Switch Teams Time (Seconds)", "Switch Teams", opt_SwitchTeams_Time, 60, 1)
+    registerConfig(bool, "Enable Server Stats Monitor", "Advanced", opt_EnableServerStats, false, 0)
+    registerConfig(float[1:10], "Update Shared Stats Interval", "Advanced", opt_UpdateServerStatsInterval, 2, 1)
+    registerConfig(bool, "Team Balance Enabled", "Team Balance", opt_TeamBalance_Enabled, true, 0)
+    registerConfig(bool, "Team Balance Swap Players Teams", "Team Balance", opt_TeamBalance_MovePlayers, true, 0)
+    registerConfig(bool, "Team Balance Spawn Bots", "Team Balance", opt_TeamBalance_SpawnBot, true, 0)
+    registerConfig(int[0:6], "Team Balance Spawn Bot Count", "Team Balance", opt_TeamBalance_SpawnBotCount, 3, 0)
 
     spawn = [
         false,
         vect(49.469, -1.611, -13.959),
         vect(35.795, 4.230, -23.222),
-        getConfig(CONFIG_SWITCH_TIMER_VALUE)
+        getConfig(opt_SwitchTeams_Time)
     ]
     
     createHud(clientOnly(), "\u200b\n\n\n\n\nNUCLEAR", 5, HudPosition.LEFT, Color.RED, SpecVisibility.ALWAYS)
@@ -81,14 +85,9 @@ rule "Initialize player":
     eventPlayer.disableGamemodeInWorldUi()
     eventPlayer.disableVoiceChat(true, false, false)
 
-rule "Collect metrics":
-    @Condition getMatchTime() == 10 or isMatchComplete()
-    printLog("Final global damage: {}".format(stats[STAT_DAMAGE]))
-    printLog("Final global heal: {}".format(stats[STAT_HEAL]))
-
 #!include "modules/stats.opy"
 #!include "modules/spawn.opy"
 #!include "modules/score.opy"
-
-# TODO
-/*#!include "modules/bots.opy"*/
+#!include "modules/icon.opy"
+#!include "modules/balance.opy"
+#!include "modules/bots.opy"
